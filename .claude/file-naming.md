@@ -1,54 +1,61 @@
 # Directories and File Naming
 
-## Workspace layout
+## Module layout
 
 | Path | Contents |
 |------|----------|
-| `Cargo.toml` | Workspace root manifest. Defines `members = ["crates/*"]` and `[workspace.dependencies]`. |
-| `rust-toolchain.toml` | Pins the toolchain channel for every contributor. |
-| `rustfmt.toml` / `clippy.toml` / `deny.toml` | Tooling configuration. |
-| `crates/<name>/` | One directory per crate. |
-| `target/` | Build output. Git-ignored. |
+| `go.mod` / `go.sum` | Module path, the `go`/`toolchain` version pin, dependency graph + checksums. |
+| `.golangci.yml` | Lint + format configuration. |
+| `Makefile` | Task runner for build / vet / lint / fmt / test / vuln / licenses / watch. |
+| `cmd/<binary>/main.go` | One directory per executable; `package main`. |
+| `internal/<pkg>/` | Private packages, importable only within this module. |
+| `pkg/<pkg>/` | Public packages intended for external import. Omit if there are none. |
+| `bin/` | Build output. Git-ignored. |
 
-## Per-crate layout
+## Per-package layout
 
 | Path | Contents |
 |------|----------|
-| `crates/<name>/Cargo.toml` | Crate manifest. Inherits shared keys from the workspace via `<key>.workspace = true`. |
-| `crates/<name>/src/lib.rs` | Library entrypoint. Public API + crate-level `//!` docs. |
-| `crates/<name>/src/main.rs` | Binary entrypoint (for `--bin` crates). |
-| `crates/<name>/src/<module>.rs` | Submodules. |
-| `crates/<name>/tests/` | Integration tests. One file per feature; each compiles as a separate binary. |
-| `crates/<name>/benches/` | Benchmarks (Criterion or built-in `#[bench]`). Optional. |
-| `crates/<name>/examples/` | Runnable examples. `cargo run --example <name>`. |
+| `internal/<pkg>/<file>.go` | Implementation; exported identifiers get doc comments. |
+| `internal/<pkg>/doc.go` | Optional home for the `// Package <pkg> …` comment. |
+| `internal/<pkg>/<file>_test.go` | Tests for that file (`package <pkg>` for white-box, `package <pkg>_test` for black-box). |
+| `internal/<pkg>/testdata/` | Fixtures. The `testdata` name is ignored by the Go toolchain. |
 
 ## Naming conventions
 
 | Item | Convention | Example |
 |------|------------|---------|
-| Crate directory | `kebab-case` | `crates/data-store` |
-| Crate identifier (in code) | `snake_case` | `use data_store::…` |
-| Files / modules | `snake_case.rs` | `user_repository.rs` |
-| Types, traits, enums | `PascalCase` | `UserRepository`, `RepoError` |
-| Functions, methods, locals | `snake_case` | `find_by_id`, `db_pool` |
-| Constants, statics | `SCREAMING_SNAKE_CASE` | `MAX_RETRIES` |
-| Lifetime parameters | short `'lowercase` | `'a`, `'src` |
-| Type parameters | short `PascalCase` | `T`, `K`, `Ctx` |
+| Module path | lowercase; hyphens allowed in the host/repo segment | `github.com/ninoverse/claude-mit-go-template` |
+| Package name / directory | short, all-lowercase, no underscores or MixedCaps | `package store`, `internal/store/` |
+| Binary | `cmd/<binary>/main.go`, `package main` | `cmd/app/main.go` |
+| Source / test file | lowercase (underscores allowed) / `_test.go` suffix | `user_repository.go`, `user_repository_test.go` |
+| Exported identifier | `MixedCaps` (leading capital = exported) | `UserRepository`, `FindByID` |
+| Unexported identifier | `mixedCaps` (leading lowercase = package-private) | `dbPool`, `findByID` |
+| Constants | `MixedCaps` / `mixedCaps` — **not** SCREAMING_SNAKE | `MaxRetries`, `defaultTimeout` |
+| Interfaces | `MixedCaps`; single-method interfaces take an `-er` suffix | `Reader`, `UserStore` |
+| Initialisms | keep a consistent case throughout | `ID`, `URL`, `HTTPServer`, `userID` |
+| Type parameters (generics) | short uppercase letters | `[T any]`, `[K comparable, V any]` |
+| Errors | `Err…` sentinel vars, `…Error` types | `ErrNotFound`, `ValidationError` |
 
-## Module declaration pattern
+Exported vs. unexported is signalled purely by the **first letter's case** — Go
+has no `pub` keyword, no `snake_case` identifiers, and no SCREAMING_SNAKE
+constants. Choose package names that read well at the call site (`store.New()`,
+not `store.NewStore()`).
 
-Submodules are declared in the parent module (`lib.rs` or another `mod.rs`-style
-file). Prefer one file per module over `<module>/mod.rs`:
+## Package pattern
 
-```rust
-// crates/data-store/src/lib.rs
-pub mod repository;
-pub mod error;
+One package per directory; the directory name matches the `package` clause.
+A new package is simply a new directory with `.go` files sharing a `package`
+declaration — there is no per-package manifest:
+
+```go
+// internal/store/store.go
+package store
 ```
 
 ```text
-crates/data-store/src/
-├── lib.rs
-├── repository.rs
-└── error.rs
+internal/store/
+├── store.go
+├── store_test.go
+└── doc.go        // optional: holds the `// Package store …` comment
 ```

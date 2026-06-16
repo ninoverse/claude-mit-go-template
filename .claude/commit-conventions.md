@@ -27,21 +27,21 @@ Follow the [Conventional Commits](https://www.conventionalcommits.org/) specific
 | `perf` | Performance improvement |
 | `revert` | Reverts a previous commit |
 
-Append `!` after the type for breaking changes: `feat!: bump MSRV to 1.85`.
+Append `!` after the type for breaking changes: `feat!: drop support for Go 1.24`.
 
 ## Scopes (optional but recommended)
 
-Use the crate name or layer being changed: `<crate-name>`, `workspace`, `ci`, `deps`, `config`.
+Use the package name or layer being changed: `<package-name>`, `module`, `ci`, `deps`, `config`.
 
 ## Examples
 
 ```
-feat(data-store): add async batch insert API
-fix(http-client): retry budget leak under timeout
-refactor(workspace): move shared error type into errors crate
-chore(deps): bump tokio to 1.40
-docs: document MSRV policy in CLAUDE.md
-feat!: bump MSRV to 1.85
+feat(store): add batch insert API
+fix(httpclient): retry budget leak under timeout
+refactor(module): move shared error type into an errors package
+chore(deps): bump golang.org/x/sync to v0.10.0
+docs: document the Go version policy in CLAUDE.md
+feat!: drop support for Go 1.24
 ```
 
 ## What to avoid
