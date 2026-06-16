@@ -4,33 +4,43 @@ This file provides strict guidance and architectural rules for Claude Code (clau
 
 ## Commands & Tooling
 
-- **Toolchain:** Rust is pinned via `rust-toolchain.toml` (channel = `stable`). Every contributor automatically gets the latest stable toolchain on first `cargo` invocation. Required components: `rustfmt`, `clippy`.
+- **Toolchain:** The Go version is pinned via the `go` and `toolchain` directives in `go.mod` (mirrored in `.go-version`). With `GOTOOLCHAIN=auto` (the default) every contributor automatically downloads the pinned toolchain on first `go` invocation. The full-parity dev tools are `golangci-lint` (lint + format), `gotestsum` (test runner), `govulncheck` (CVE scan), `go-licenses` (license check), and `air` (live reload).
 - **Maintain the Build:** Never leave the codebase in a state where build, lint, or tests fail. Run the relevant commands below to verify your work before concluding a task.
 
 ```bash
-cargo build --workspace                                                # Build all crates
-cargo watch -x 'check --workspace'                                     # Dev loop (requires cargo-watch)
-cargo build --workspace --release                                      # Release build
-cargo clippy --workspace --all-targets --all-features -- -D warnings   # Lint
-cargo fmt --all                                                        # Format (check-only: `cargo fmt --all -- --check`)
-cargo nextest run --workspace                                          # Tests (fallback: cargo test --workspace)
-cargo deny check                                                       # Licenses + advisories
-cargo audit                                                            # CVE check
+go build ./...                                       # Build all packages
+air                                                  # Dev loop / live reload (requires air)
+go vet ./...                                          # Vet
+golangci-lint run ./...                              # Lint
+golangci-lint fmt --diff                             # Format check (write: golangci-lint fmt)
+gotestsum -- -race ./...                             # Tests (fallback: go test -race ./...)
+gotestsum -- -race -coverprofile=coverage.txt ./...  # Tests + coverage
+govulncheck ./...                                    # CVE check
+go-licenses check ./...                              # License check
 ```
 
-Install the auxiliary tools once per machine:
+Every target above is also wrapped in the `Makefile` (`make build`, `make lint`, `make test-race`, `make ci`, …). Install the auxiliary tools once per machine:
 
 ```bash
-cargo install --locked cargo-nextest cargo-watch cargo-deny cargo-audit
+make tools     # or, individually:
+go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
+go install gotest.tools/gotestsum@latest
+go install golang.org/x/vuln/cmd/govulncheck@latest
+go install github.com/google/go-licenses/v2@latest
+go install github.com/air-verse/air@latest
 ```
 
-## Architecture & Workspace Rules
+## Architecture & Module Rules
 
-**Layout:** Cargo workspace, edition `2021`. New code goes in a crate under `crates/<name>/`. The workspace root `Cargo.toml` declares `members = ["crates/*"]` and centralizes shared metadata under `[workspace.package]` and shared dependencies under `[workspace.dependencies]`.
+**Layout:** A single Go module rooted at the repo. The module path is declared in `go.mod`; dependency versions are centralized in that one file. Code follows the standard Go layout:
 
-**Crate inheritance:** Crate manifests inherit shared keys from the workspace using `<key>.workspace = true` (e.g. `edition.workspace = true`, `license.workspace = true`). Shared dependencies are referenced as `<crate> = { workspace = true }`.
+- `cmd/<binary>/main.go` — one directory per executable (`package main`).
+- `internal/<pkg>/` — private packages, importable only within this module.
+- `pkg/<pkg>/` — public packages intended for external import (omit if there are none).
 
-**MSRV:** Pinned in `clippy.toml` and `[workspace.package].rust-version`. Do not bump it incidentally.
+**Packages:** One package per directory; the directory name matches the `package` clause. A new package is just a new directory with a `package` declaration — there is no per-package manifest. Cross-package use is a plain `import "github.com/ninoverse/claude-mit-go-template/internal/<pkg>"`. New dependencies are added with `go get` and land in `go.mod`/`go.sum`.
+
+**Go version:** The minimum language version is the `go` directive in `go.mod` (the analog of an MSRV). Do not lower it incidentally. There are no editions, no LTO/codegen profiles, and `gofmt` is non-configurable by design.
 
 ## Behavioral Guidelines
 
@@ -79,5 +89,5 @@ Use your file-reading capabilities to read the exact rules in the `.claude/` dir
 - **Testing/Verifying:** Read `.claude/testing-requirements.md`
 - **Opening PRs:** Read `.claude/pr-guidelines.md`
 - **Creating new files:** Read `.claude/file-naming.md`
-- **Building a crate or module:** Read `.claude/crate-workflow.md`
+- **Building a package:** Read `.claude/package-workflow.md`
 - **Deciding what to build next / branching strategy:** Read `.claude/execution-order.md`

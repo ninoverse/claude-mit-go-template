@@ -2,34 +2,37 @@
 
 ## Before merging any change
 
-- [ ] `cargo fmt --all -- --check`
-- [ ] `cargo clippy --workspace --all-targets --all-features -- -D warnings`
-- [ ] `cargo nextest run --workspace`  *(falls back to `cargo test --workspace` if nextest is not installed)*
-- [ ] `cargo deny check` *(licenses + advisories)*
+- [ ] `golangci-lint fmt --diff` *(no formatting drift)*
+- [ ] `golangci-lint run ./...` and `go vet ./...`
+- [ ] `gotestsum -- -race ./...` *(falls back to `go test -race ./...` if gotestsum is not installed)*
+- [ ] `govulncheck ./...` *(known-vulnerability scan)*
+- [ ] `go-licenses check ./...` *(dependency licenses)*
 
-All four must pass before marking a PR ready for review.
+All must pass before marking a PR ready for review. `make ci` runs the core gate.
 
 ## Test layout
 
 | Test type | Location | When to use |
 |-----------|----------|-------------|
-| Unit | `#[cfg(test)] mod tests { … }` inline at the bottom of the file under test | Testing private functions or internal logic |
-| Integration | `crates/<name>/tests/<feature>.rs` | Testing the crate's public API end-to-end. Each file is compiled as a separate binary. |
-| Doc test | `///` doc comment on a public item | Verifying that documented usage examples actually compile and run |
-| Property | with `proptest` crate, inside unit or integration tests | Invariant-style tests across a generated input space |
-| Benchmark | `crates/<name>/benches/<name>.rs` | Performance regression tracking. Optional. |
+| Unit | `<file>_test.go` beside the code, `package <pkg>` (white-box) | Testing internal logic with access to unexported identifiers |
+| Black-box | `<file>_test.go`, `package <pkg>_test` | Exercising only the package's exported API, as a consumer would |
+| Example | `func Example...()` with a trailing `// Output:` comment | Documented usage that compiles, runs under `go test`, and shows in `go doc` |
+| Table-driven | subtests via `t.Run(name, ...)` over a slice of cases | The default shape for unit tests with multiple input/output cases |
+| Benchmark | `func Benchmark...(b *testing.B)` in a `_test.go` file | Performance tracking. Optional. |
+| Fixtures | files under a `testdata/` directory | Static inputs; the `testdata` name is ignored by the Go toolchain |
 
 ## Running specific test types
 
 ```bash
-cargo test --doc                              # doc-tests only
-cargo nextest run -p <crate>                  # one crate
-cargo nextest run -p <crate> <test_name>      # one test
-cargo test --test <integration_file>          # one integration file
+go test ./internal/<pkg>/...                  # one package
+go test -run TestName ./internal/<pkg>/       # one test
+go test -run Example ./...                     # examples only
+go test -bench . ./internal/<pkg>/            # benchmarks
+go test -race -coverprofile=coverage.txt ./...  # race + coverage
 ```
 
 ## Watching tests during development
 
 ```bash
-cargo watch -x 'nextest run --workspace'
+gotestsum --watch -- ./...
 ```
