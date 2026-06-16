@@ -14,6 +14,7 @@ files already wired up.
 | `.golangci.yml` | `golangci-lint` v2 config: linters + the `gofmt`/`goimports` formatters. |
 | `Makefile` | Task runner wrapping build / vet / lint / fmt / test / vuln / licenses / watch. |
 | `.air.toml` | `air` live-reload config. |
+| `Dockerfile` / `.dockerignore` | Multi-stage Go build → distroless image, for container / Cloud Run deploys. |
 | `.gitignore` | Ignores binaries, coverage output, and `go.work`. |
 | `cmd/`, `internal/` | Standard Go layout dirs — add binaries under `cmd/<name>/` and private packages under `internal/<name>/`. |
 | `CLAUDE.md` | Top-level rules surfaced to Claude Code. |
