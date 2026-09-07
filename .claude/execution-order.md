@@ -10,31 +10,26 @@ See `.claude/branch-naming.md` for the branch name format.
 
 | Work type | Branch prefix | One PR per |
 |-----------|--------------|-----------|
-| Foundation scaffold | `chore/` | whole scaffold |
-| Toolchain / config bump | `chore/` | one PR |
-| Package group | `feat/` | group (e.g. `feat/storage-packages`) |
+| Foundation scaffold | `chore/` | scaffold step |
+| Toolchain / config bump | `chore/` | bump |
+| Package group | `feat/` | package — a group is a *sequence* of PRs, not one PR |
 | Single isolated package | `feat/` | package |
 | Rename / refactor | `refactor/` | logical rename unit |
-| Docs / rules | `docs/` | one PR |
+| Docs / rules | `docs/` | change |
 
-**Draft PR rule:** open a draft PR at the group's **first commit**. Push every
-subsequent commit to that same PR. Mark ready for review only when these all
-pass cleanly:
-
-```bash
-golangci-lint fmt --diff
-golangci-lint run ./...
-go vet ./...
-gotestsum -- -race ./...
-```
+**The loop is defined in `.claude/git-flow.md`** — branch from `main`, one
+commit, hand the PR to the user, wait for the merge, repeat. No stacked PRs, and
+every PR must leave `main` green on its own.
 
 ---
 
 ## Within each group
 
-- Build **one package at a time**.
+- Build **one package at a time**, each on its own branch and its own PR.
 - Follow the 9-step checklist in `.claude/package-workflow.md` for each.
-- Stop and confirm with the user after each package before starting the next.
+- Wait for the package's PR to be merged before cutting the branch for the next.
+- Order the packages so each one compiles against what is already on `main`. A
+  package that needs a not-yet-merged sibling belongs later in the sequence.
 - Existing packages in scope get an **audit-pass** (lint + tests + a read-through);
   only commit if a real defect is found.
 
@@ -44,4 +39,5 @@ gotestsum -- -race ./...
    comments on exported identifiers, and unchecked errors in non-test paths.
 2. Run `golangci-lint run ./internal/<pkg>/...` and
    `gotestsum -- -race ./internal/<pkg>/...`.
-3. Surface anything broken. Only commit if a fix is needed; use an isolated commit.
+3. Surface anything broken. Only commit if a fix is needed — and give the fix its
+   own branch and PR rather than folding it into unrelated work.

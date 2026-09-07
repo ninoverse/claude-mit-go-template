@@ -23,11 +23,9 @@ Keep it under 72 characters.
 
 ## Rules
 
-- One logical change per PR; split unrelated work into separate PRs
-- Rebase onto `main` before requesting review (no unnecessary merge commits)
-- All lint checks must pass: `golangci-lint run ./...` and `go vet ./...`
-- `go build ./...` must succeed before marking the PR ready for review
-- `gotestsum -- -race ./...` must pass (or `go test -race ./...`)
+- One logical change per PR, in **one commit**; split unrelated work into separate PRs
+- Branch from an up-to-date `main`, so no rebase is needed before review
+- `make ci` must pass before the branch is pushed — every gate, zero findings
 - Link to the relevant section in CLAUDE.md or a `.claude/` rule file if the PR establishes a new pattern
 
 ## Size guidance
@@ -38,6 +36,10 @@ Keep it under 72 characters.
 | 200 – 600 | Add context in the description about where to start reading |
 | > 600 | Consider splitting — or at minimum call it out and justify it |
 
-## Draft PRs
+## Who opens the PR
 
-Use draft status for work-in-progress or when feedback is needed before the implementation is complete. Convert to ready only when `golangci-lint run ./...` and `go build ./...` both pass.
+Claude pushes the branch and outputs the title and description, then stops. The
+user opens and merges the PR. See `.claude/git-flow.md` for the full loop.
+
+Because a branch is only pushed once the gates already pass, there is no
+work-in-progress state to represent — draft PRs are not used.

@@ -92,41 +92,28 @@ New third-party dependencies are added with `go get <module>` and land in
 
 ### 8. Verification gate
 
-All must pass before committing:
-
 ```bash
-golangci-lint fmt --diff
-golangci-lint run ./...
-go vet ./...
-gotestsum -- -race ./...        # falls back to `go test -race ./...`
+make ci
 ```
 
-### 9. Commit + push + draft PR
+Every gate, zero findings, before committing. See
+`.claude/testing-requirements.md` for what it runs.
+
+Two that catch people out on a *new* package specifically:
+
+- `revive` requires a package comment as well as a doc comment on every exported
+  identifier, so a package is red until it has one.
+- `goimports` groups this module's own imports last. An import block `gofmt`
+  accepts can still fail `make fmt-check`.
+
+### 9. Commit + push, then hand the PR over
 
 ```
 feat(<pkg>): add <pkg> package
 ```
 
-One package per commit. Never batch multiple packages in one commit.
+One package per commit, one commit per branch. Never batch multiple packages.
 
-- Push the commit to the current group branch.
-- If this is the **group's first commit**: open a draft PR immediately.
-- If the draft PR already exists: just push to it.
-- **Stop.** Ask before starting the next package.
-
----
-
-## Group verification gate
-
-Run before marking any group PR ready for review:
-
-```bash
-golangci-lint fmt --diff
-golangci-lint run ./...
-go vet ./...
-gotestsum -- -race ./...
-govulncheck ./...
-go-licenses check ./...
-```
-
-All must pass cleanly with zero warnings.
+Push the branch, output the PR title and description, and **stop** — the user
+opens and merges it. Wait for the merge before starting the next package. The
+full loop, and why it is not a stack, is in `.claude/git-flow.md`.

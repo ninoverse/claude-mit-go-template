@@ -3,9 +3,9 @@
 ## What to check
 
 ### Lint and format
-- `golangci-lint fmt --diff` is clean — no `gofmt`/`goimports` drift.
-- `golangci-lint run ./...` and `go vet ./...` pass with zero
-  `//nolint:...` directives added without a justifying comment.
+- `make fmt-check` is clean — no `gofmt`/`goimports` drift.
+- `make vet` and `make lint` pass, with zero `//nolint:...` directives added
+  without a justifying comment.
 
 ### Error handling
 - Every returned `error` is checked (enforced by `errcheck`) — no ignored
@@ -32,12 +32,14 @@
 
 ### Dependencies
 - New dependencies have a one-line justification in the PR description.
-- `govulncheck ./...` reports no known, reachable vulnerabilities.
-- `go-licenses check ./...` passes — no forbidden licenses. Module integrity is
-  guaranteed by `go.sum` + the checksum database (`GOSUMDB`).
+- `make vuln` reports no known, reachable vulnerabilities.
+- `make licenses` passes — no forbidden licenses. Module integrity is guaranteed
+  by `go.sum` + the checksum database (`GOSUMDB`).
 - The `go` directive in `go.mod` is not raised unless the change explicitly
-  intends to.
+  intends to. Raising it means editing `go.mod`, `.go-version`, the `Dockerfile`
+  and the `go-version` input in `.github/workflows/ci.yml` together — a PR that
+  moves some of those and not the rest goes red on the floor job.
 
 ### Tests
 - New behavior is covered by at least one test (table-driven where it fits).
-- `gotestsum -- -race ./...` (or `go test -race ./...`) passes.
+- `make test-race` passes.
