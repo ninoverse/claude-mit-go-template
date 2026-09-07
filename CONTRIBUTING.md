@@ -21,6 +21,7 @@ that is how CI installs them.
 ## The loop
 
 One branch, one commit, one PR, merged before the next begins. No stacked PRs.
+Full rules in [`.claude/git-flow.md`](.claude/git-flow.md).
 
 ```bash
 git switch main && git pull --ff-only

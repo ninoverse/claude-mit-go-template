@@ -7,28 +7,37 @@ This file provides strict guidance and architectural rules for Claude Code (clau
 - **Toolchain:** The Go version is pinned via the `go` and `toolchain` directives in `go.mod` (mirrored in `.go-version`). With `GOTOOLCHAIN=auto` (the default) every contributor automatically downloads the pinned toolchain on first `go` invocation. The full-parity dev tools are `golangci-lint` (lint + format), `gotestsum` (test runner), `govulncheck` (CVE scan), `go-licenses` (license check), and `air` (live reload).
 - **Maintain the Build:** Never leave the codebase in a state where build, lint, or tests fail. Run the relevant commands below to verify your work before concluding a task.
 
-```bash
-go build ./...                                       # Build all packages
-air                                                  # Dev loop / live reload (requires air)
-go vet ./...                                          # Vet
-golangci-lint run ./...                              # Lint
-golangci-lint fmt --diff                             # Format check (write: golangci-lint fmt)
-gotestsum -- -race ./...                             # Tests (fallback: go test -race ./...)
-gotestsum -- -race -coverprofile=coverage.txt ./...  # Tests + coverage
-govulncheck ./...                                    # CVE check
-go-licenses check ./...                              # License check
-```
-
-Every target above is also wrapped in the `Makefile` (`make build`, `make lint`, `make test-race`, `make ci`, …). Install the auxiliary tools once per machine:
+Commands live in the `Makefile`, which is the single source of truth — do not
+copy the underlying go invocations into docs or CI, call the target.
 
 ```bash
-make tools     # or, individually:
-go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
-go install gotest.tools/gotestsum@latest
-go install golang.org/x/vuln/cmd/govulncheck@latest
-go install github.com/google/go-licenses/v2@latest
-go install github.com/air-verse/air@latest
+make            # list every target
+make ci         # every merge gate, in order — run this before every commit
+make build      # build all packages
+make fmt        # format in place
+make fmt-check  # gate 1
+make vet        # gate 2, first half
+make lint       # gate 2 — golangci-lint
+make test-race  # gate 3 — race detector plus coverage
+make vuln       # gate 4 — govulncheck
+make licenses   # gate 4 — go-licenses
+make cover      # coverage summary
+make watch      # dev loop, live reload
 ```
+
+Install the auxiliary tools once per machine:
+
+```bash
+make tools      # golangci-lint, gotestsum, govulncheck, go-licenses, air
+```
+
+`make tools-lint`, `tools-test`, `tools-vuln` and `tools-licenses` install one at
+a time; that is how CI does it, so each gate pulls only the binary it uses.
+
+**Automation:** `.claude/settings.json` allowlists these commands so they do not
+prompt, runs `gofmt` on every `.go` file you edit, and warns if the module stops
+compiling when a turn ends. Formatting is therefore already handled — do not run
+`make fmt` after each edit.
 
 ## Architecture & Module Rules
 
@@ -83,6 +92,9 @@ go install github.com/air-verse/air@latest
 
 Use your file-reading capabilities to read the exact rules in the `.claude/` directory **before** executing any of the following tasks:
 
+- **Any change that ends in a PR:** Read `.claude/git-flow.md` **first** — it defines the branch → commit → PR loop everything else fits inside
+- **Adding a package:** `/new-package <name>` runs the `.claude/package-workflow.md` checklist
+- **Checking your work:** `/gates` reports which of the merge gates pass
 - **Committing code:** Read `.claude/commit-conventions.md`
 - **Creating branches:** Read `.claude/branch-naming.md`
 - **Reviewing PRs:** Read `.claude/code-review.md`
