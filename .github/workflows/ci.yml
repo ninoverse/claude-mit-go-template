@@ -1,0 +1,35 @@
+name: CI
+
+# The gate definitions live in ninoverse/.github so every Go repository in the
+# organization runs the same ones. This file only says *when* to run them and
+# what this module's Go floor is.
+#
+# The reusable workflow's contract is the Makefile: it invokes `make fmt-check`,
+# `make vet`, `make lint`, `make test-race`, `make vuln` and `make licenses`, so
+# the go invocation behind each gate keeps exactly one definition, here in the
+# Makefile.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Belongs here rather than in the called workflow: inside a called workflow,
+# `github.workflow` still resolves to this caller's name.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    # Pinned to a tag, not @main — a change to @main would land here with no
+    # pull request in this repository.
+    uses: ninoverse/.github/.github/workflows/go-ci.yml@v1
+    with:
+      # Must match the `go` directive in go.mod. Nothing else catches a change
+      # that breaks it, because every other job runs the current stable
+      # toolchain.
+      go-version: "1.25"
