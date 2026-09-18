@@ -1,4 +1,6 @@
-# Testing Requirements
+<!-- agentcfg:start -->
+<!-- language/go/testing.md · v0.17.6 -->
+# Testing instructions
 
 ## Before merging any change
 
@@ -68,3 +70,4 @@ go test -race -coverprofile=coverage.txt ./...  # race + coverage
 ```bash
 gotestsum --watch -- ./...
 ```
+<!-- agentcfg:end -->

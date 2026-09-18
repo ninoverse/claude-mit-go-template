@@ -1,4 +1,6 @@
-# Directories and File Naming
+<!-- agentcfg:start -->
+<!-- language/go/file-naming.md · v0.17.6 -->
+# Directories and file naming
 
 ## Module layout
 
@@ -25,7 +27,7 @@
 
 | Item | Convention | Example |
 |------|------------|---------|
-| Module path | lowercase; hyphens allowed in the host/repo segment | `github.com/ninoverse/claude-mit-go-template` |
+| Module path | lowercase; hyphens allowed in the host/repo segment | `github.com/ninoverse/<repo>` |
 | Package name / directory | short, all-lowercase, no underscores or MixedCaps | `package store`, `internal/store/` |
 | Binary | `cmd/<binary>/main.go`, `package main` | `cmd/app/main.go` |
 | Source / test file | lowercase (underscores allowed) / `_test.go` suffix | `user_repository.go`, `user_repository_test.go` |
@@ -59,3 +61,4 @@ internal/store/
 ├── store_test.go
 └── doc.go        // optional: holds the `// Package store …` comment
 ```
+<!-- agentcfg:end -->

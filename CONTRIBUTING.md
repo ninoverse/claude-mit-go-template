@@ -1,7 +1,7 @@
 # Contributing
 
 The rules that govern this repository live in [`CLAUDE.md`](CLAUDE.md) and
-[`.claude/`](.claude/). They are written for Claude Code but they are not
+[`.agents/`](.agents/). They are written for Claude Code but they are not
 agent-specific — they are the conventions, and they apply to humans identically.
 This file is the short version and points at the authoritative one for each
 topic.
@@ -21,14 +21,14 @@ that is how CI installs them.
 ## The loop
 
 One branch, one commit, one PR, merged before the next begins. No stacked PRs.
-Full rules in [`.claude/git-flow.md`](.claude/git-flow.md).
+Full rules in [`.agents/git-flow.md`](.agents/git-flow.md).
 
 ```bash
 git switch main && git pull --ff-only
-git switch -c <type>/<short-description>     # .claude/branch-naming.md
+git switch -c <type>/<short-description>     # .agents/branch-naming.md
 # ... change ...
 make ci                                      # must pass before you push
-git commit                                   # .claude/commit-conventions.md
+git commit                                   # .agents/commit-conventions.md
 git push -u origin <branch>
 ```
 
@@ -48,7 +48,7 @@ make ci
 zero findings, before you push. CI runs the same targets, one job per gate, plus
 a job that builds with `GOTOOLCHAIN=local` so a dependency cannot quietly raise
 the toolchain out from under the `go` directive.
-See [`.claude/testing-requirements.md`](.claude/testing-requirements.md).
+See [`.agents/go-testing.md`](.agents/go-testing.md).
 
 Two that catch people out:
 
@@ -60,7 +60,7 @@ Two that catch people out:
 
 ## Adding a package
 
-Follow [`.claude/package-workflow.md`](.claude/package-workflow.md). Binaries go
+Follow [`.agents/new-package.md`](.agents/new-package.md). Binaries go
 under `cmd/<name>/`, everything private under `internal/<name>/`.
 
 `internal/greet` and `cmd/app` are placeholders. Delete them once you have a real

@@ -1,0 +1,22 @@
+{
+  "files": [
+    ".agents/branch-naming.md",
+    ".agents/code-review.md",
+    ".agents/commit-conventions.md",
+    ".agents/execution-order.md",
+    ".agents/gates.md",
+    ".agents/git-flow.md",
+    ".agents/go-code-review.md",
+    ".agents/go-file-naming.md",
+    ".agents/go-testing.md",
+    ".agents/new-package.md",
+    ".agents/pr-guidelines.md",
+    ".agents/service-release.md",
+    ".claude/settings.json",
+    ".claude/skills/gates/SKILL.md",
+    ".claude/skills/new-package/SKILL.md",
+    ".claude/skills/why/SKILL.md",
+    "AGENTS.md",
+    "CLAUDE.md"
+  ]
+}
