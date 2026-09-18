@@ -1,7 +1,16 @@
-# Package Workflow
+---
+name: "new-package"
+description: "Add a package to the module following the 9-step package workflow"
+argument-hint: "<package-name> [one-line description of what it does]"
+---
+
+<!-- language/go/tasks/new-unit.md · v0.17.6 -->
+# Adding a package
 
 The exact procedure for adding or modifying a single package in this Go module.
 Follow every step in order; do not skip or reorder.
+
+The package to add: $ARGUMENTS
 
 ---
 
@@ -18,6 +27,10 @@ Before writing any code:
    ```
    If it exists, report the finding and ask: skip / overwrite / modify.
    Never silently overwrite.
+
+Decide the location before scaffolding: `internal/<pkg>/` for a private package,
+`cmd/<binary>/main.go` for an executable, `pkg/<pkg>/` only if it is genuinely
+meant for import from outside this module.
 
 ---
 
@@ -86,7 +99,7 @@ func TestDoThing(t *testing.T) {
 ### 7. Dependencies & wiring
 
 Cross-package use is a plain import:
-`import "github.com/ninoverse/claude-mit-go-template/internal/<other>"`.
+`import "<module-path>/internal/<other>"`, with the module path from `go.mod`.
 New third-party dependencies are added with `go get <module>` and land in
 `go.mod`/`go.sum` — run `go mod tidy` before committing.
 
@@ -96,8 +109,8 @@ New third-party dependencies are added with `go get <module>` and land in
 make ci
 ```
 
-Every gate, zero findings, before committing. See
-`.claude/testing-requirements.md` for what it runs.
+Every gate, zero findings, before committing. See *Testing instructions* for
+what it runs.
 
 Two that catch people out on a *new* package specifically:
 
@@ -116,4 +129,20 @@ One package per commit, one commit per branch. Never batch multiple packages.
 
 Push the branch, output the PR title and description, and **stop** — the user
 opens and merges it. Wait for the merge before starting the next package. The
-full loop, and why it is not a stack, is in `.claude/git-flow.md`.
+full loop, and why it is not a stack, is in *Git flow*.
+
+---
+
+## Before committing
+
+Points that are easy to get wrong, so verify each one:
+
+- A **package comment** (`// Package <pkg> …`) on one file, and a doc comment
+  starting with the identifier's own name on every exported identifier. `revive`
+  enforces both, so the package is red without them.
+- Imports of this module are grouped last by `goimports`. An import block that
+  `gofmt` accepts can still fail `make fmt-check`.
+- Every returned `error` is checked in non-test code — `errcheck` is on, and
+  `_ =` does not satisfy it. Errors are wrapped with `%w` as they propagate.
+- At least one test, table-driven with subtests where there are multiple cases.
+- `make ci` passes before you commit.

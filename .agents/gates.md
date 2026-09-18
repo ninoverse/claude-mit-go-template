@@ -1,10 +1,8 @@
----
-description: Run the merge gates and report exactly which pass or fail
-argument-hint: "[optional: ./internal/<pkg>/... to scope to one package]"
-allowed-tools: Bash(make:*), Bash(go:*), Bash(golangci-lint:*), Bash(gotestsum:*), Bash(govulncheck:*), Bash(go-licenses:*)
----
+<!-- agentcfg:start -->
+<!-- language/go/tasks/gates.md · v0.17.6 -->
+# Merge gates
 
-Run the merge gates defined in `.claude/testing-requirements.md`:
+Run the merge gates defined in *Testing instructions*:
 
 ```
 make ci
@@ -28,3 +26,4 @@ Then report a one-line-per-gate summary:
 has not run. Report those as not run, not as passing.
 
 Do not fix anything unless asked. This command reports; it does not edit.
+<!-- agentcfg:end -->

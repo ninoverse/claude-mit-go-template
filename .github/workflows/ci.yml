@@ -8,6 +8,11 @@ name: CI
 # `make vet`, `make lint`, `make test-race`, `make vuln` and `make licenses`, so
 # the go invocation behind each gate keeps exactly one definition, here in the
 # Makefile.
+#
+# The agentcfg job below is not part of that. It is written in place because
+# `agentcfg check` is not a Go gate — the Rust repositories run the same check
+# with no Go in sight — and because being managed should cost a repository no
+# workflow file of its own.
 
 on:
   push:
@@ -33,3 +38,21 @@ jobs:
       # that breaks it, because every other job runs the current stable
       # toolchain.
       go-version: "1.25"
+
+  # The other direction from the Monday bump pull request: when someone edits
+  # .agentprofile.yml — adds a concern, changes the deployment — the composed
+  # files go stale, and this fails in their own pull request rather than a bot
+  # regenerating them afterwards. The person making the change sees the result,
+  # and the fix is `make agentcfg ARGS=sync` locally.
+  agentcfg:
+    name: agentcfg check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # The fetch-and-run lives in the Makefile, like every other command here.
+      # `make agentcfg ARGS=check` is the same line a contributor types locally,
+      # which is what stops CI and a laptop from disagreeing about the version.
+      # No Go setup: the published binary is static and this job never builds.
+      - name: Check the composed files against the pinned version
+        run: make agentcfg ARGS=check

@@ -7,7 +7,8 @@
 GOLANGCI_LINT_VERSION := v2.12.2
 
 .PHONY: help tools tools-lint tools-test tools-vuln tools-licenses tools-watch \
-        build vet fmt fmt-check lint test test-race cover vuln licenses watch ci
+        build vet fmt fmt-check lint test test-race cover vuln licenses watch ci \
+        agentcfg
 
 help: ## List available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
@@ -77,3 +78,33 @@ watch: ## Dev loop with live reload (requires air)
 	air
 
 ci: fmt-check vet lint test-race vuln licenses ## Run the full verification gate
+
+# `make agentcfg ARGS=check` is what someone runs after editing their profile,
+# and the point is that it needs nothing installed: the published binary is
+# static, and this repository has no Rust toolchain to build one with. The
+# version comes from `.agentprofile.yml`, so the cache cannot drift from the pin
+# — a bump fetches a new file rather than reusing a stale one — and `.agentcfg/`
+# is gitignored, so nothing downloaded is ever committed.
+agentcfg: ## Run the pinned agentcfg, e.g. `make agentcfg ARGS=check`
+	@set -eu; \
+	if [ ! -f .agentprofile.yml ]; then \
+		echo "no .agentprofile.yml here — this target is for a repository agentcfg manages" >&2; \
+		exit 1; \
+	fi; \
+	version=$$(sed -n 's/^config_version:[[:space:]]*//p' .agentprofile.yml); \
+	case "$$(uname -s)/$$(uname -m)" in \
+		Linux/x86_64)                target=x86_64-unknown-linux-musl ;; \
+		Linux/aarch64 | Linux/arm64) target=aarch64-unknown-linux-musl ;; \
+		Darwin/arm64)                target=aarch64-apple-darwin ;; \
+		*) \
+			echo "no agentcfg binary for $$(uname -s)/$$(uname -m) — published: linux-musl x86_64 and aarch64, darwin aarch64" >&2; \
+			exit 1 ;; \
+	esac; \
+	binary=".agentcfg/agentcfg-$${version}"; \
+	if [ ! -x "$${binary}" ]; then \
+		mkdir -p .agentcfg; \
+		curl -fsSL -o "$${binary}" \
+			"https://github.com/ninoverse/agent-config-sync/releases/download/$${version}/agentcfg-$${target}"; \
+		chmod +x "$${binary}"; \
+	fi; \
+	exec "$${binary}" $(ARGS)

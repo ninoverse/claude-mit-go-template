@@ -1,11 +1,10 @@
-# Code Review Guidelines
+<!-- agentcfg:start -->
+<!-- language/go/code-review.md · v0.17.6 -->
+# Go code review
+
+Read alongside *Code review*, which holds the checks every language shares.
 
 ## What to check
-
-### Lint and format
-- `make fmt-check` is clean — no `gofmt`/`goimports` drift.
-- `make vet` and `make lint` pass, with zero `//nolint:...` directives added
-  without a justifying comment.
 
 ### Error handling
 - Every returned `error` is checked (enforced by `errcheck`) — no ignored
@@ -31,15 +30,13 @@
   unless it is trivially obvious from the signature.
 
 ### Dependencies
-- New dependencies have a one-line justification in the PR description.
 - `make vuln` reports no known, reachable vulnerabilities.
 - `make licenses` passes — no forbidden licenses. Module integrity is guaranteed
   by `go.sum` + the checksum database (`GOSUMDB`).
-- The `go` directive in `go.mod` is not raised unless the change explicitly
-  intends to. Raising it means editing `go.mod`, `.go-version`, the `Dockerfile`
-  and the `go-version` input in `.github/workflows/ci.yml` together — a PR that
-  moves some of those and not the rest goes red on the floor job.
+- A change that does raise the `go` directive edits `go.mod`, `.go-version`, the
+  `Dockerfile` and the `go-version` input in `.github/workflows/ci.yml` together
+  — a PR that moves some of those and not the rest goes red on the floor job.
 
 ### Tests
-- New behavior is covered by at least one test (table-driven where it fits).
-- `make test-race` passes.
+- Tests are table-driven where it fits, and `make test-race` passes.
+<!-- agentcfg:end -->

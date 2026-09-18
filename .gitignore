@@ -21,3 +21,8 @@ go.work.sum
 
 # Editor / OS
 .DS_Store
+
+# The agentcfg binary `make agentcfg` fetches. Downloaded per pin, never
+# committed — Renovate collects post-upgrade changes from `git status`, so an
+# unignored copy would land three megabytes in a pull request about prose.
+/.agentcfg/
