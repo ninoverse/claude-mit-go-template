@@ -1,10 +1,23 @@
 .DEFAULT_GOAL := help
 
-# Pin golangci-lint to a concrete version; `@latest` is discouraged for it.
-# The others stay on @latest deliberately: golangci-lint is the only one whose
-# rule set changes what passes, so it is the only one that can turn a gate red
-# without a commit. A newer vulnerability scanner is what you want.
+# Every tool is pinned, and the custom manager in renovate.json bumps these
+# lines. Only golangci-lint was pinned before, on the grounds that its rule set
+# is the only thing that can turn a gate red without a commit. That premise does
+# not hold: go-licenses is built by whatever Go is installed and then fails to
+# read a standard library newer than the one that built it, and govulncheck
+# v1.8.0 requires a Go newer than this module targets. Neither is a rule change
+# and both arrive without a commit, which is the property the pin is for.
+#
+# renovate: datasource=go depName=github.com/golangci/golangci-lint/v2
 GOLANGCI_LINT_VERSION := v2.12.2
+# renovate: datasource=go depName=gotest.tools/gotestsum
+GOTESTSUM_VERSION := v1.13.0
+# renovate: datasource=go depName=golang.org/x/vuln
+GOVULNCHECK_VERSION := v1.8.0
+# renovate: datasource=go depName=github.com/google/go-licenses/v2
+GO_LICENSES_VERSION := v2.0.1
+# renovate: datasource=go depName=github.com/air-verse/air
+AIR_VERSION := v1.67.4
 
 .PHONY: help tools tools-lint tools-test tools-vuln tools-licenses tools-watch \
         build vet fmt fmt-check lint test test-race cover vuln licenses watch ci \
@@ -23,16 +36,16 @@ tools-lint: ## Install golangci-lint
 	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
 
 tools-test: ## Install gotestsum
-	go install gotest.tools/gotestsum@latest
+	go install gotest.tools/gotestsum@$(GOTESTSUM_VERSION)
 
 tools-vuln: ## Install govulncheck
-	go install golang.org/x/vuln/cmd/govulncheck@latest
+	go install golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION)
 
 tools-licenses: ## Install go-licenses
-	go install github.com/google/go-licenses/v2@latest
+	go install github.com/google/go-licenses/v2@$(GO_LICENSES_VERSION)
 
 tools-watch: ## Install air
-	go install github.com/air-verse/air@latest
+	go install github.com/air-verse/air@$(AIR_VERSION)
 
 build: ## Build all packages
 	go build ./...
