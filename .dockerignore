@@ -2,9 +2,14 @@
 .git
 .github
 
-# Claude Code config & project docs
+# Agent config & project docs
+.agents
 .claude
 *.md
+
+# The agentcfg binary `make agentcfg` fetches. Gitignored, so it exists only
+# on a working laptop — which is exactly where `docker build` runs.
+.agentcfg
 
 # Build / test artifacts
 bin/
