@@ -14,6 +14,14 @@ make ci         # confirm a clean checkout passes
 ```
 
 The Go version comes from [`go.mod`](go.mod) and [`.go-version`](.go-version).
+Install that Go rather than whatever your package manager happens to have.
+`make tools` builds each binary with `go install`, using your toolchain, and a
+tool built by a Go older than this module's `go` directive can fail to read the
+standard library it is then asked to analyse. `make licenses` is where that
+shows, as a run of `package os does not have module info` errors that read like
+the repository is broken. It is not; the toolchain is older than the module, and
+CI never sees it because `setup-go` installs the version in `.go-version`.
+
 `make tools` installs each binary separately, so if you only need one gate,
 `make tools-lint`, `tools-test`, `tools-vuln` and `tools-licenses` exist too —
 that is how CI installs them.
@@ -89,12 +97,17 @@ Majors wait for approval on the Dependency Dashboard issue; everything
 non-breaking arrives as one grouped PR on Monday. Security fixes ignore the
 schedule entirely.
 
-Two pins Renovate does not manage, because they are `go install` lines in the
-Makefile rather than module requirements: `GOLANGCI_LINT_VERSION`, and the Go
-version itself. Raising the Go version is a deliberate edit to `go.mod`,
-`.go-version`, the `Dockerfile` and the `go-version` input in
-`.github/workflows/ci.yml` together — CI compares the last of those against
-`go.mod` on every run, so a partial bump fails rather than drifting.
+One pin Renovate does not manage: the Go version itself. Raising it is a
+deliberate edit to `go.mod`, `.go-version`, the `Dockerfile` and the
+`go-version` input in `.github/workflows/ci.yml` together — CI compares the last
+of those against `go.mod` on every run, so a partial bump fails rather than
+drifting.
+
+The dev-tool versions in the `Makefile` are managed, by the custom manager in
+`renovate.json`. They are `go install` lines rather than module requirements, so
+no built-in manager sees them; a `# renovate:` comment above each pin supplies
+the datasource and the module path. Keep that comment with its line — without it
+the pin is invisible and stops being bumped.
 
 Anything that should change for *every* project — the schedule, the grouping,
 the major-approval gate — belongs in the org preset, not here. Overriding it
