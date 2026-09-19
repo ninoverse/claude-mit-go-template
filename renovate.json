@@ -1,4 +1,19 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>ninoverse/.github"]
+  "extends": [
+    "github>ninoverse/.github"
+  ],
+  "customManagers": [
+    {
+      "description": "The dev tools the Makefile installs. They are `go install` lines rather than module requirements, so no built-in manager sees them. Belongs in the org preset once a second Go repository exists.",
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^Makefile$/"
+      ],
+      "matchStrings": [
+        "#[ \\t]*renovate:[ \\t]*datasource=(?<datasource>\\S+)[ \\t]+depName=(?<depName>\\S+)[ \\t]*\\n[A-Z_]+[ \\t]*:=[ \\t]*(?<currentValue>v\\S+)"
+      ],
+      "versioningTemplate": "semver"
+    }
+  ]
 }
