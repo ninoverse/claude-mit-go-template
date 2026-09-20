@@ -26,4 +26,4 @@ permissions:
 
 jobs:
   audit:
-    uses: ninoverse/.github/.github/workflows/go-audit.yml@v1
+    uses: ninoverse/.github/.github/workflows/go-audit.yml@v1.1.1
