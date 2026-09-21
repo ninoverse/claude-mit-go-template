@@ -30,9 +30,9 @@ permissions:
 
 jobs:
   ci:
-    # Pinned to a tag, not @main — a change to @main would land here with no
-    # pull request in this repository.
-    uses: ninoverse/.github/.github/workflows/go-ci.yml@v1
+    # Pinned to a released version, not @main or a short @v1: @main lands here
+    # with no pull request, and @v1 never moves. Renovate opens the bump.
+    uses: ninoverse/.github/.github/workflows/go-ci.yml@v1.1.1
     with:
       # Must match the `go` directive in go.mod. Nothing else catches a change
       # that breaks it, because every other job runs the current stable
