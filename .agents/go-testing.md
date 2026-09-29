@@ -1,5 +1,5 @@
 <!-- agentcfg:start -->
-<!-- language/go/testing.md · v0.17.6 -->
+<!-- language/go/testing.md · v0.18.10 -->
 # Testing instructions
 
 ## Before merging any change

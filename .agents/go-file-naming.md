@@ -1,5 +1,5 @@
 <!-- agentcfg:start -->
-<!-- language/go/file-naming.md · v0.17.6 -->
+<!-- language/go/file-naming.md · v0.18.10 -->
 # Directories and file naming
 
 ## Module layout
