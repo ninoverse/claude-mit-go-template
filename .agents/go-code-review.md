@@ -1,5 +1,5 @@
 <!-- agentcfg:start -->
-<!-- language/go/code-review.md · v0.17.6 -->
+<!-- language/go/code-review.md · v0.18.10 -->
 # Go code review
 
 Read alongside *Code review*, which holds the checks every language shares.

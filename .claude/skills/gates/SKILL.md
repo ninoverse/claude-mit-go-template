@@ -5,7 +5,7 @@ argument-hint: "[optional: ./internal/<pkg>/... to scope to one package]"
 allowed-tools: "Bash(make:*), Bash(go:*), Bash(golangci-lint:*), Bash(gotestsum:*), Bash(govulncheck:*), Bash(go-licenses:*)"
 ---
 
-<!-- language/go/tasks/gates.md · v0.17.6 -->
+<!-- language/go/tasks/gates.md · v0.18.10 -->
 # Merge gates
 
 Run the merge gates defined in *Testing instructions*:

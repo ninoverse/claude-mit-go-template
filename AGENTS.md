@@ -1,7 +1,7 @@
 Scaffolding for new Go module projects: a pinned toolchain, the merge gates wired to CI, and the agent rules already in place. Fork or copy it to start a project.
 
 <!-- agentcfg:start -->
-<!-- language/go/tooling.md · v0.17.6 -->
+<!-- language/go/tooling.md · v0.18.10 -->
 # Build and test commands
 
 **Toolchain:** The Go version is pinned via the `go` and `toolchain` directives in `go.mod` (mirrored in `.go-version`). With `GOTOOLCHAIN=auto` (the default) every contributor automatically downloads the pinned toolchain on first `go` invocation. The full-parity dev tools are `golangci-lint` (lint + format), `gotestsum` (test runner), `govulncheck` (CVE scan), `go-licenses` (license check), and `air` (live reload).
@@ -45,7 +45,7 @@ a time; that is how CI does it, so each gate pulls only the binary it uses.
 
 **Go version:** The minimum language version is the `go` directive in `go.mod` (the analog of an MSRV). Do not lower it incidentally. There are no editions, no LTO/codegen profiles, and `gofmt` is non-configurable by design.
 
-<!-- core/behavior.md · v0.17.6 -->
+<!-- core/behavior.md · v0.18.10 -->
 # Behavioral guidelines
 
 **Maintain the Build:** Never leave the codebase in a state where build, lint,
@@ -85,7 +85,7 @@ your work before concluding a task.
 - Transform tasks into verifiable goals (e.g., "Add validation" → "Write tests for invalid inputs, then make them pass").
 - For multi-step tasks, state a brief plan and verify each step independently.
 
-<!-- concerns/template/rules.md · v0.17.6 -->
+<!-- concerns/template/rules.md · v0.18.10 -->
 # Template repository
 
 This repository is a GitHub template: new projects start as a copy of it, and
@@ -94,14 +94,14 @@ every copy inherits everything here.
 - Keep the example code minimal. It demonstrates the conventions and keeps the
   gates green on a fresh copy; it holds no real business logic.
 - Where the template ships placeholder packages, they exist because the
-  toolchain fails on an empty module and the `Dockerfile` needs a
+  gates fail on an empty module and the `Dockerfile` needs a
   binary to build. Remove a placeholder only once a real package covers its
   role, as a change of its own, and point the `Dockerfile` at the real binary in
   that change.
 - A project created from this template removes `template` from `concerns` in its
   `.agentprofile.yml`.
 
-<!-- agentcfg:index · v0.17.6 -->
+<!-- agentcfg:index · v0.18.10 -->
 # Extended rules
 
 Read these when they apply; they are not loaded by default.
