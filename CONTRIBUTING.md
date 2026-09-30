@@ -122,9 +122,8 @@ Four things in this repository point at `ninoverse` and will not work as-is:
 - `.github/workflows/ci.yml` and `audit.yml` call reusable workflows from that
   same repository. They are public and pinned to `@v1`, so they keep working —
   see the README for how to vendor them instead.
-- `.github/workflows/bump-version.yml` and `release.yml` do the same, and also
-  need organization-level app and Google Cloud credentials that a fork does not
-  inherit.
+- `.github/workflows/bump-version.yml` does the same, and also needs an
+  organization-level app credential that a fork does not inherit.
 - `.github/CODEOWNERS` names `@nicolapasqua99`.
 
 `SECURITY.md`, `CODE_OF_CONDUCT.md` and the issue forms are **not** in this

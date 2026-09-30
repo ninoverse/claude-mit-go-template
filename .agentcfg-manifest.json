@@ -11,7 +11,7 @@
     ".agents/go-testing.md",
     ".agents/new-package.md",
     ".agents/pr-guidelines.md",
-    ".agents/service-release.md",
+    ".agents/tag-only-release.md",
     ".claude/settings.json",
     ".claude/skills/gates/SKILL.md",
     ".claude/skills/new-package/SKILL.md",
