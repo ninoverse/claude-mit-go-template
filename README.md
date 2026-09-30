@@ -17,7 +17,7 @@ files already wired up.
 | `.golangci.yml` | `golangci-lint` v2 config: linters + the `gofmt`/`goimports` formatters. |
 | `Makefile` | Task runner. Canonical form of every command; CI and the rules call these targets. |
 | `.air.toml` | `air` live-reload config. |
-| `.github/workflows/ci.yml` | Calls the org's reusable `go-ci.yml`: the gates, a Go floor job and a coverage artifact. Sets the triggers and the Go version. |
+| `.github/workflows/ci.yml` | Calls the org's reusable `go-ci.yml`: the gates, a Go floor job and a coverage artifact; and `actionlint.yml`, which lints the workflow files. Sets the triggers and the Go version. |
 | `.github/workflows/audit.yml` | Calls the org's reusable `go-audit.yml`: `govulncheck` on a cron. |
 | `.github/workflows/bump-version.yml` | Calls the org's `go-bump-version.yml`: reads the commit type, pushes a SemVer tag. |
 | `.github/workflows/release.yml` | Calls the org's `release-cloudrun.yml` on that tag. |
@@ -83,6 +83,9 @@ and
 [`go-audit.yml`](https://github.com/ninoverse/.github/blob/main/.github/workflows/go-audit.yml)
 into your own `.github/workflows/` and drop the `uses:` line. They call the same
 `make` targets either way.
+`ci.yml` also calls
+[`actionlint.yml`](https://github.com/ninoverse/.github/blob/main/.github/workflows/actionlint.yml),
+which lints the workflow files and calls no target; copy it the same way.
 
 `bump-version.yml` and `release.yml` will *not* work in a fork as-is: they need
 organization-level GitHub App and Google Cloud credentials that a fork does not
