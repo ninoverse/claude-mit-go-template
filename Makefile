@@ -9,7 +9,7 @@
 # and both arrive without a commit, which is the property the pin is for.
 #
 # renovate: datasource=go depName=github.com/golangci/golangci-lint/v2
-GOLANGCI_LINT_VERSION := v2.12.2
+GOLANGCI_LINT_VERSION := v2.14.0
 # renovate: datasource=go depName=gotest.tools/gotestsum
 GOTESTSUM_VERSION := v1.13.0
 # renovate: datasource=go depName=golang.org/x/vuln
