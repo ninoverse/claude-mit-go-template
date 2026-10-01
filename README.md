@@ -19,8 +19,7 @@ files already wired up.
 | `.air.toml` | `air` live-reload config. |
 | `.github/workflows/ci.yml` | Calls the org's reusable `go-ci.yml`: the gates, a Go floor job and a coverage artifact; and `actionlint.yml`, which lints the workflow files. Sets the triggers and the Go version. |
 | `.github/workflows/audit.yml` | Calls the org's reusable `go-audit.yml`: `govulncheck` on a cron. |
-| `.github/workflows/bump-version.yml` | Calls the org's `go-bump-version.yml`: reads the commit type, pushes a SemVer tag. |
-| `.github/workflows/release.yml` | Calls the org's `release-cloudrun.yml` on that tag. |
+| `.github/workflows/bump-version.yml` | Calls the org's `go-bump-version.yml`: reads the commit type, pushes a SemVer tag. Nothing deploys on it. |
 | `renovate.json` | One line extending the org's shared preset. Renovate runs centrally; there is no workflow or token here. |
 | `Dockerfile` / `.dockerignore` | Multi-stage Go build → distroless image, for container / Cloud Run deploys. |
 | `.gitignore` | Ignores binaries, coverage output, and `go.work`. |
@@ -87,10 +86,10 @@ into your own `.github/workflows/` and drop the `uses:` line. They call the same
 [`actionlint.yml`](https://github.com/ninoverse/.github/blob/main/.github/workflows/actionlint.yml),
 which lints the workflow files and calls no target; copy it the same way.
 
-`bump-version.yml` and `release.yml` will *not* work in a fork as-is: they need
-organization-level GitHub App and Google Cloud credentials that a fork does not
-inherit. `renovate.json` points at the same organization's preset — replace it
-with your own policy.
+`bump-version.yml` will *not* work in a fork as-is: it needs an
+organization-level GitHub App credential that a fork does not inherit.
+`renovate.json` points at the same organization's preset — replace it with your
+own policy.
 
 Community health files (`SECURITY.md`, issue forms) also come from that
 repository. GitHub serves organization defaults only within the owning
