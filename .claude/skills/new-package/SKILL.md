@@ -4,7 +4,7 @@ description: "Add a package to the module following the 9-step package workflow"
 argument-hint: "<package-name> [one-line description of what it does]"
 ---
 
-<!-- language/go/tasks/new-unit.md · v0.18.10 -->
+<!-- language/go/tasks/new-unit.md · v1.0.1 -->
 # Adding a package
 
 The exact procedure for adding or modifying a single package in this Go module.
@@ -34,7 +34,7 @@ meant for import from outside this module.
 
 ---
 
-## 9-step checklist (one package, one commit)
+## 9-step checklist (one package)
 
 Complete all nine steps before committing. Never commit a partial package.
 
@@ -105,6 +105,10 @@ New third-party dependencies are added with `go get <module>` and land in
 
 ### 8. Verification gate
 
+If `.agents/new-package.local.md` exists, follow it now, before the gate. It
+holds the steps this repository adds to this checklist; it is written by hand,
+and `agentcfg` leaves it alone.
+
 ```bash
 make ci
 ```
@@ -119,17 +123,14 @@ Two that catch people out on a *new* package specifically:
 - `goimports` groups this module's own imports last. An import block `gofmt`
   accepts can still fail `make fmt-check`.
 
-### 9. Commit + push, then hand the PR over
+### 9. Commit, then hand the PR over
 
 ```
 feat(<pkg>): add <pkg> package
 ```
 
-One package per commit, one commit per branch. Never batch multiple packages.
-
-Push the branch, output the PR title and description, and **stop** — the user
-opens and merges it. Wait for the merge before starting the next package. The
-full loop, and why it is not a stack, is in *Git flow*.
+One package per PR. Never batch multiple packages. Commit and hand the PR over
+as *Git flow* and *PR instructions* say.
 
 ---
 
