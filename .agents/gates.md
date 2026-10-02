@@ -1,5 +1,5 @@
 <!-- agentcfg:start -->
-<!-- language/go/tasks/gates.md · v0.18.10 -->
+<!-- language/go/tasks/gates.md · v1.0.1 -->
 # Merge gates
 
 Run the merge gates defined in *Testing instructions*:
