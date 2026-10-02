@@ -18,6 +18,6 @@ See .agents/pr-guidelines.md and .agents/commit-conventions.md.
 ---
 
 - [ ] `make ci` passes — every gate, zero findings
-- [ ] One logical change, in one commit
+- [ ] One logical change
 - [ ] Exported identifiers have doc comments; every returned error is handled
 - [ ] The `go` directive in `go.mod` was not bumped incidentally
