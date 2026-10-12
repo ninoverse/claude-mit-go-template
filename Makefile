@@ -13,7 +13,7 @@ GOLANGCI_LINT_VERSION := v2.14.0
 # renovate: datasource=go depName=gotest.tools/gotestsum
 GOTESTSUM_VERSION := v1.13.0
 # renovate: datasource=go depName=golang.org/x/vuln
-GOVULNCHECK_VERSION := v1.8.0
+GOVULNCHECK_VERSION := v1.9.0
 # renovate: datasource=go depName=github.com/google/go-licenses/v2
 GO_LICENSES_VERSION := v2.0.1
 # renovate: datasource=go depName=github.com/air-verse/air
