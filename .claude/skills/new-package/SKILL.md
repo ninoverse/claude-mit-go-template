@@ -4,7 +4,7 @@ description: "Add a package to the module following the 9-step package workflow"
 argument-hint: "<package-name> [one-line description of what it does]"
 ---
 
-<!-- language/go/tasks/new-unit.md · v1.0.1 -->
+<!-- language/go/tasks/new-unit.md · v1.2.1 -->
 # Adding a package
 
 The exact procedure for adding or modifying a single package in this Go module.
