@@ -1,8 +1,8 @@
 <!-- agentcfg:start -->
-<!-- agentcfg:import · v1.0.1 -->
+<!-- agentcfg:import · v1.2.2 -->
 @AGENTS.md
 
-<!-- language/go/automation.md · v1.0.1 -->
+<!-- language/go/automation.md · v1.2.2 -->
 # Automation
 
 `.claude/settings.json` allowlists the commands in *Build and test commands* so
